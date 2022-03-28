@@ -1,6 +1,6 @@
-<template>
+<!--<template>
   <div class="bg-light p-5 rounded">
-    <!-- <vc-calendar /> -->
+    
     <button type="button" class="btn btn-primary" @click="goToSearchPage()">
       Search
     </button>
@@ -8,7 +8,119 @@
 
     <v-date-picker is-expanded :attributes="attributes" @dayclick="dayClick" />
   </div>
+</template>-->
+
+<template>
+  <div>
+    <div class="bg-light p-5 rounded">
+      <!-- <vc-calendar /> -->
+      <button type="button" class="btn btn-primary" @click="goToSearchPage()">
+        Search
+      </button>
+      <br />
+
+      <v-date-picker
+        is-expanded
+        :attributes="attributes"
+        @dayclick="dayClick"
+      />
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h1>Upcoming events</h1>
+        <table v-if="upcomingEvents.length > 0" class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Project Name</th>
+              <th scope="col">Project Manager</th>
+              <th scope="col">Report Date</th>
+              <th scope="col">Start Date</th>
+              <th scope="col">End Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(chunk, rowIndex) in upcomingEvents"
+              :key="`row-${rowIndex}`"
+            >
+              <td>{{ chunk.project_name }}</td>
+              <td>{{ chunk.project_manager }}</td>
+              <td>{{ chunk.report_date }}</td>
+              <td>{{ chunk.project_start_date }}</td>
+              <td>{{ chunk.project_end_date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h1>Managers</h1>
+        <div class="row">
+          <div
+            class="card col-md-3"
+            v-for="(chunk, rowIndex) in managers"
+            :key="`row-${rowIndex}`"
+          >
+            <img class="card-img-top" :src="mangerImage" alt="Card image cap" />
+            <div class="card-body">
+              <p class="card-text">
+                {{ chunk.project_manager }}
+              </p>
+            </div>
+          </div>
+          <!-- <div class="card col-md-3">
+            <img class="card-img-top" :src="mangerImage" alt="Card image cap" />
+            <div class="card-body">
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div>
+          <div class="card col-md-3">
+            <img class="card-img-top" :src="mangerImage" alt="Card image cap" />
+            <div class="card-body">
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div>
+          <div class="card col-md-3">
+            <img class="card-img-top" :src="mangerImage" alt="Card image cap" />
+            <div class="card-body">
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>-->
 </template>
+
 
 <script>
 // @ is an alias to /src
@@ -21,7 +133,10 @@ export default {
   data: function () {
     return {
       selectedDate: null,
+      upcomingEvents: [],
       events: [],
+      mangerImage: require("../assets/manager.jpg"),
+      managers: [],
     };
   },
   computed: {
@@ -81,6 +196,24 @@ export default {
       this.events = [];
       console.error(e);
       alert("something went wrong");
+    }
+
+    this.upcomingEvents = [];
+    try {
+      let result = await axios.get(
+        "http://localhost:3000/event/upcoming/events"
+      );
+      this.upcomingEvents = result.data;
+    } catch (ex) {
+      this.upcomingEvents = [];
+    }
+
+    this.managers = [];
+    try {
+      let result = await axios.get("http://localhost:3000/event/manager/top4");
+      this.managers = result.data;
+    } catch (ex) {
+      this.managers = [];
     }
   },
 

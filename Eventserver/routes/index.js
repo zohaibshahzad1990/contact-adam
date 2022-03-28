@@ -33,6 +33,18 @@ router.get("/event/:id", async function (req, res) {
   res.send(event);
 });
 
+router.get("/event/upcoming/events", async function (req, res) {
+  const events = await Events.find()
+    .sort({ 'report_date': 'desc' }).limit(3);
+  res.send(events);
+});
+
+router.get("/event/manager/top4", async function (req, res) {
+  const events = await Events.find({}, ['project_manager']).limit(4);
+  res.send(events);
+});
+
+
 router.post("/event", async function (req, res) {
   const { project_name, project_manager, project_start_date, project_end_date, report_date } = req.body
 

@@ -7,7 +7,7 @@ var express = require("express");
 var app = express();
 
 mongoose
-  .connect("mongodb+srv://zohaib:test@devconnector.nml2s.mongodb.net/EventList?retryWrites=true&w=majority", {
+  .connect("mongodb+srv://Eventgroup:1234@eventmanagementsystem.6lq87.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
